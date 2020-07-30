@@ -103,3 +103,9 @@ C:\Users\adminuser\source\repos\SimpleBread\SimpleBread\obj\Debug\SimpleBread.cs
 C:\Users\adminuser\source\repos\SimpleBread\SimpleBread\obj\Debug\SimpleBread.csproj.CopyComplete
 C:\Users\adminuser\source\repos\SimpleBread\SimpleBread\obj\Debug\SimpleBread.dll
 C:\Users\adminuser\source\repos\SimpleBread\SimpleBread\obj\Debug\SimpleBread.pdb
+C:\Users\adminuser\source\repos\SimpleBread\SimpleBread\bin\System.Net.Http.Formatting.dll
+C:\Users\adminuser\source\repos\SimpleBread\SimpleBread\bin\System.Web.Http.dll
+C:\Users\adminuser\source\repos\SimpleBread\SimpleBread\bin\System.Web.Http.WebHost.dll
+C:\Users\adminuser\source\repos\SimpleBread\SimpleBread\bin\System.Net.Http.Formatting.xml
+C:\Users\adminuser\source\repos\SimpleBread\SimpleBread\bin\System.Web.Http.xml
+C:\Users\adminuser\source\repos\SimpleBread\SimpleBread\bin\System.Web.Http.WebHost.xml
