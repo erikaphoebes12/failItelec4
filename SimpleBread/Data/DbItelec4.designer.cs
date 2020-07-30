@@ -30,9 +30,6 @@ namespace SimpleBread.Data
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertMstStudent(MstStudent instance);
-    partial void UpdateMstStudent(MstStudent instance);
-    partial void DeleteMstStudent(MstStudent instance);
     partial void InsertMstCourse(MstCourse instance);
     partial void UpdateMstCourse(MstCourse instance);
     partial void DeleteMstCourse(MstCourse instance);
@@ -42,6 +39,9 @@ namespace SimpleBread.Data
     partial void InsertAspNetUserLogin(AspNetUserLogin instance);
     partial void UpdateAspNetUserLogin(AspNetUserLogin instance);
     partial void DeleteAspNetUserLogin(AspNetUserLogin instance);
+    partial void InsertMstStudent(MstStudent instance);
+    partial void UpdateMstStudent(MstStudent instance);
+    partial void DeleteMstStudent(MstStudent instance);
     #endregion
 		
 		public DbItelec4DataContext() : 
@@ -74,14 +74,6 @@ namespace SimpleBread.Data
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<MstStudent> MstStudents
-		{
-			get
-			{
-				return this.GetTable<MstStudent>();
-			}
-		}
-		
 		public System.Data.Linq.Table<MstCourse> MstCourses
 		{
 			get
@@ -105,179 +97,12 @@ namespace SimpleBread.Data
 				return this.GetTable<AspNetUserLogin>();
 			}
 		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MstStudents")]
-	public partial class MstStudent : INotifyPropertyChanging, INotifyPropertyChanged
-	{
 		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _Id;
-		
-		private string _FullName;
-		
-		private string _StudentCode;
-		
-		private int _Course;
-		
-		private EntityRef<MstCourse> _MstCourse;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnFullNameChanging(string value);
-    partial void OnFullNameChanged();
-    partial void OnStudentCodeChanging(string value);
-    partial void OnStudentCodeChanged();
-    partial void OnCourseChanging(int value);
-    partial void OnCourseChanged();
-    #endregion
-		
-		public MstStudent()
-		{
-			this._MstCourse = default(EntityRef<MstCourse>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int Id
+		public System.Data.Linq.Table<MstStudent> MstStudents
 		{
 			get
 			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullName", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
-		public string FullName
-		{
-			get
-			{
-				return this._FullName;
-			}
-			set
-			{
-				if ((this._FullName != value))
-				{
-					this.OnFullNameChanging(value);
-					this.SendPropertyChanging();
-					this._FullName = value;
-					this.SendPropertyChanged("FullName");
-					this.OnFullNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudentCode", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
-		public string StudentCode
-		{
-			get
-			{
-				return this._StudentCode;
-			}
-			set
-			{
-				if ((this._StudentCode != value))
-				{
-					this.OnStudentCodeChanging(value);
-					this.SendPropertyChanging();
-					this._StudentCode = value;
-					this.SendPropertyChanged("StudentCode");
-					this.OnStudentCodeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Course", DbType="Int NOT NULL")]
-		public int Course
-		{
-			get
-			{
-				return this._Course;
-			}
-			set
-			{
-				if ((this._Course != value))
-				{
-					if (this._MstCourse.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnCourseChanging(value);
-					this.SendPropertyChanging();
-					this._Course = value;
-					this.SendPropertyChanged("Course");
-					this.OnCourseChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstCourse_MstStudent", Storage="_MstCourse", ThisKey="Course", OtherKey="Id", IsForeignKey=true)]
-		public MstCourse MstCourse
-		{
-			get
-			{
-				return this._MstCourse.Entity;
-			}
-			set
-			{
-				MstCourse previousValue = this._MstCourse.Entity;
-				if (((previousValue != value) 
-							|| (this._MstCourse.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._MstCourse.Entity = null;
-						previousValue.MstStudents.Remove(this);
-					}
-					this._MstCourse.Entity = value;
-					if ((value != null))
-					{
-						value.MstStudents.Add(this);
-						this._Course = value.Id;
-					}
-					else
-					{
-						this._Course = default(int);
-					}
-					this.SendPropertyChanged("MstCourse");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+				return this.GetTable<MstStudent>();
 			}
 		}
 	}
@@ -374,7 +199,7 @@ namespace SimpleBread.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstCourse_MstStudent", Storage="_MstStudents", ThisKey="Id", OtherKey="Course")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstCourse_MstStudent", Storage="_MstStudents", ThisKey="Id", OtherKey="CourseId")]
 		public EntitySet<MstStudent> MstStudents
 		{
 			get
@@ -900,6 +725,181 @@ namespace SimpleBread.Data
 						this._UserId = default(string);
 					}
 					this.SendPropertyChanged("AspNetUser");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MstStudents")]
+	public partial class MstStudent : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private string _FullName;
+		
+		private string _StudentCode;
+		
+		private int _CourseId;
+		
+		private EntityRef<MstCourse> _MstCourse;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnFullNameChanging(string value);
+    partial void OnFullNameChanged();
+    partial void OnStudentCodeChanging(string value);
+    partial void OnStudentCodeChanged();
+    partial void OnCourseIdChanging(int value);
+    partial void OnCourseIdChanged();
+    #endregion
+		
+		public MstStudent()
+		{
+			this._MstCourse = default(EntityRef<MstCourse>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullName", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string FullName
+		{
+			get
+			{
+				return this._FullName;
+			}
+			set
+			{
+				if ((this._FullName != value))
+				{
+					this.OnFullNameChanging(value);
+					this.SendPropertyChanging();
+					this._FullName = value;
+					this.SendPropertyChanged("FullName");
+					this.OnFullNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StudentCode", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string StudentCode
+		{
+			get
+			{
+				return this._StudentCode;
+			}
+			set
+			{
+				if ((this._StudentCode != value))
+				{
+					this.OnStudentCodeChanging(value);
+					this.SendPropertyChanging();
+					this._StudentCode = value;
+					this.SendPropertyChanged("StudentCode");
+					this.OnStudentCodeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CourseId", DbType="Int NOT NULL")]
+		public int CourseId
+		{
+			get
+			{
+				return this._CourseId;
+			}
+			set
+			{
+				if ((this._CourseId != value))
+				{
+					if (this._MstCourse.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCourseIdChanging(value);
+					this.SendPropertyChanging();
+					this._CourseId = value;
+					this.SendPropertyChanged("CourseId");
+					this.OnCourseIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstCourse_MstStudent", Storage="_MstCourse", ThisKey="CourseId", OtherKey="Id", IsForeignKey=true)]
+		public MstCourse MstCourse
+		{
+			get
+			{
+				return this._MstCourse.Entity;
+			}
+			set
+			{
+				MstCourse previousValue = this._MstCourse.Entity;
+				if (((previousValue != value) 
+							|| (this._MstCourse.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._MstCourse.Entity = null;
+						previousValue.MstStudents.Remove(this);
+					}
+					this._MstCourse.Entity = value;
+					if ((value != null))
+					{
+						value.MstStudents.Add(this);
+						this._CourseId = value.Id;
+					}
+					else
+					{
+						this._CourseId = default(int);
+					}
+					this.SendPropertyChanged("MstCourse");
 				}
 			}
 		}

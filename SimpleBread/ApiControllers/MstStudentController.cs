@@ -7,33 +7,159 @@ using System.Web.Http;
 
 namespace SimpleBread.ApiControllers
 {
-    public class MstStudentController : ApiController
+    [Authorize, RoutePrefix("api/student")]
+    public class MstStudentController: ApiController
     {
-        // GET api/<controller>
-        public IEnumerable<string> Get()
+        Data.DbItelec4DataContext db = new Data.DbItelec4DataContext();
+
+        [Authorize, HttpGet, Route("course/list")]
+        public List<Api_Models.MstCourse_ApiModel> ListCourse()
         {
-            return new string[] { "value1", "value2" };
+            var courses = from d in db.MstCourses
+                          select new Api_Models.MstCourse_ApiModel
+                          {
+                              Id = d.Id,
+                              CourseCode = d.CourseCode,
+                              Course = d.Course
+                          };
+
+            return courses.ToList();
         }
 
-        // GET api/<controller>/5
-        public string Get(int id)
+        [Authorize, HttpGet, Route("api/student/list")]
+        public List<Api_Models.MstStudent_ApiModel> ListStudent()
         {
-            return "value";
+            var students = from d in db.MstStudents
+                           select new Api_Models.MstStudent_ApiModel
+                           {
+                               Id = d.Id,
+                               StudentCode = d.StudentCode,
+                               FullName = d.FullName,
+                               CourseId = d.MstCourse.Id,
+                               Course = d.MstCourse.Course
+                           };
+
+            return students.OrderBy(d => d.StudentCode).ToList();
         }
 
-        // POST api/<controller>
-        public void Post([FromBody]string value)
+        [HttpGet, Route("detail/{studentId}")]
+        public Api_Models.MstStudent_ApiModel DetailStudent(String studentId)
         {
+            var student = from d in db.MstStudents
+                          where d.Id == Convert.ToInt32(studentId)
+                          select new Api_Models.MstStudent_ApiModel
+                          {
+                              Id = d.Id,
+                              StudentCode = d.StudentCode,
+                              FullName = d.FullName,
+                              CourseId = d.MstCourse.Id,
+                              Course = d.MstCourse.Course
+                          };
+
+            return student.FirstOrDefault();
         }
 
-        // PUT api/<controller>/5
-        public void Put(int id, [FromBody]string value)
+        [HttpPost, Route("add")]
+        public HttpResponseMessage AddStudent(Api_Models.MstStudent_ApiModel objStudent)
         {
+            try
+            {
+
+                var course = from d in db.MstCourses
+                             where d.Id == objStudent.CourseId
+                             select d;
+
+                if (course.Any())
+                {
+                    Data.MstStudent newStudent = new Data.MstStudent
+                    {
+                        StudentCode = objStudent.StudentCode,
+                        FullName = objStudent.FullName,
+                        CourseId = course.FirstOrDefault().Id,
+                    };
+
+                    db.MstStudents.InsertOnSubmit(newStudent);
+                    db.SubmitChanges();
+
+                    return Request.CreateResponse(HttpStatusCode.OK, "Successfully added!");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Course not found!");
+                }
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
+            }
         }
 
-        // DELETE api/<controller>/5
-        public void Delete(int id)
+        [HttpPut, Route("update/{studentId}")]
+        public HttpResponseMessage UpdateStudent(String studentId, Api_Models.MstStudent_ApiModel objStudent)
         {
+            try
+            {
+                var student = from d in db.MstStudents
+                              where d.Id == Convert.ToInt32(studentId)
+                              select d;
+
+                var course = from d in db.MstCourses
+                             where d.Id == objStudent.CourseId
+                             select d;
+
+                if (!course.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Course not found!");
+                }
+
+                if (student.Any())
+                {
+                    var updateStudent = student.FirstOrDefault();
+                    updateStudent.StudentCode = objStudent.StudentCode;
+                    updateStudent.FullName = objStudent.FullName;
+                    updateStudent.CourseId = course.FirstOrDefault().Id;
+                    db.SubmitChanges();
+
+                    return Request.CreateResponse(HttpStatusCode.OK, "Successfully added!");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Student not found!");
+                }
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
+
+            }
+        }
+
+        [HttpDelete, Route("delete/{studentId}")]
+        public HttpResponseMessage DeleteStudent(String studentId)
+        {
+            try
+            {
+                var student = from d in db.MstStudents
+                              where d.Id == Convert.ToInt32(studentId)
+                              select d;
+
+                if (student.Any())
+                {
+                    db.MstStudents.DeleteOnSubmit(student.FirstOrDefault());
+                    db.SubmitChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Successfully deleted!");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Student not found!");
+                }
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
+
+            }
         }
     }
+
 }
