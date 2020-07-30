@@ -7,160 +7,115 @@ using System.Web.Http;
 
 namespace SimpleBread.ApiControllers
 {
-    public class MstCourseController : ApiController
+    [Authorize, RoutePrefix("api/course")]
+    public class MstCourseControler : ApiController
     {
-        [Authorize, RoutePrefix("api/student")]
-        public class MstStudentController : ApiController
+        Data.DbItelec4DataContext db = new Data.DbItelec4DataContext();
+        [HttpGet, Route("list")]
+        public List<Api_Models.MstCourse_ApiModel> ListCourse()
         {
-            Data.DbItelec4DataContext db = new Data.DbItelec4DataContext();
+            var courses = from d in db.MstCourses
+                          select new Api_Models.MstCourse_ApiModel
+                          {
+                              Id = d.Id,
+                              CourseCode = d.CourseCode,
+                              Course = d.Course
+                          };
 
-            [ HttpGt, Route("course/list")]
-            public List<Api_Models.MstCourse_ApiModel> ListCourse()
+            return courses.ToList();
+        }
+
+        [HttpGet, Route("detail/{id}")]
+        public Api_Models.MstCourse_ApiModel DetailCourse(String id)
+        {
+
+            var courses = from d in db.MstCourses
+                          where d.Id == Convert.ToInt32(id)
+                          select new Api_Models.MstCourse_ApiModel
+                          {
+                              Id = d.Id,
+                              CourseCode = d.CourseCode,
+                              Course = d.Course
+                          };
+
+            return courses.FirstOrDefault();
+        }
+
+        [HttpPost, Route("add")]
+        public HttpResponseMessage AddCourse(Api_Models.MstCourse_ApiModel objCourse)
+        {
+            try
             {
-                var courses = from d in db.MstCourses
-                              select new Api_Models.MstCourse_ApiModel
-                              {
-                                  Id = d.Id,
-                                  CourseCode = d.CourseCode,
-                                  Course = d.Course
-                              };
+                Data.MstCourse newCourse = new Data.MstCourse
+                {
+                    CourseCode = objCourse.CourseCode,
+                    Course = objCourse.Course
+                };
+                db.MstCourses.InsertOnSubmit(newCourse);
+                db.SubmitChanges();
 
-                return courses.ToList();
+                return Request.CreateResponse(HttpStatusCode.OK);
             }
-
-            [HttpGet, Route("list")]
-            public List<Api_Models.MstStudent_ApiModel> ListStudent()
+            catch (Exception e)
             {
-                var students = from d in db.MstStudents
-                               select new Api_Models.MstStudent_ApiModel
-                               {
-                                   Id = d.Id,
-                                   StudentCode = d.StudentCode,
-                                   FullName = d.FullName,
-                                   CourseId = d.MstCourse.Id,
-                                   Course = d.MstCourse.Course
-                               };
-
-                return students.OrderBy(d => d.StudentCode).ToList();
-            }
-
-            [HttpGet, Route("detail/{studentId}")]
-            public Api_Models.MstStudent_ApiModel DetailStudent(String studentId)
-            {
-                var student = from d in db.MstStudents
-                              where d.Id == Convert.ToInt32(studentId)
-                              select new Api_Models.MstStudent_ApiModel
-                              {
-                                  Id = d.Id,
-                                  StudentCode = d.StudentCode,
-                                  FullName = d.FullName,
-                                  CourseId = d.MstCourse.Id,
-                                  Course = d.MstCourse.Course
-                              };
-
-                return student.FirstOrDefault();
-            }
-
-            [HttpPost, Route("add")]
-            public HttpResponseMessage AddStudent(Api_Models.MstStudent_ApiModel objStudent)
-            {
-                try
-                {
-
-                    var course = from d in db.MstCourses
-                                 where d.Id == objStudent.CourseId
-                                 select d;
-
-                    if (course.Any())
-                    {
-                        Data.MstStudent newStudent = new Data.MstStudent
-                        {
-                            StudentCode = objStudent.StudentCode,
-                            FullName = objStudent.FullName,
-                            CourseId = course.FirstOrDefault().Id,
-                        };
-
-                        db.MstStudents.InsertOnSubmit(newStudent);
-                        db.SubmitChanges();
-
-                        return Request.CreateResponse(HttpStatusCode.OK, "Successfully added!");
-                    }
-                    else
-                    {
-                        return Request.CreateResponse(HttpStatusCode.NotFound, "Course not found!");
-                    }
-                }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
-                }
-            }
-
-            [HttpPut, Route("update/{studentId}")]
-            public HttpResponseMessage UpdateStudent(String studentId, Api_Models.MstStudent_ApiModel objStudent)
-            {
-                try
-                {
-                    var student = from d in db.MstStudents
-                                  where d.Id == Convert.ToInt32(studentId)
-                                  select d;
-
-                    var course = from d in db.MstCourses
-                                 where d.Id == objStudent.CourseId
-                                 select d;
-
-                    if (!course.Any())
-                    {
-                        return Request.CreateResponse(HttpStatusCode.NotFound, "Course not found!");
-                    }
-
-                    if (student.Any())
-                    {
-                        var updateStudent = student.FirstOrDefault();
-                        updateStudent.StudentCode = objStudent.StudentCode;
-                        updateStudent.FullName = objStudent.FullName;
-                        updateStudent.CourseId = course.FirstOrDefault().Id;
-                        db.SubmitChanges();
-
-                        return Request.CreateResponse(HttpStatusCode.OK, "Successfully added!");
-                    }
-                    else
-                    {
-                        return Request.CreateResponse(HttpStatusCode.NotFound, "Student not found!");
-                    }
-                }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
-
-                }
-            }
-
-            [HttpDelete, Route("delete/{studentId}")]
-            public HttpResponseMessage DeleteStudent(String studentId)
-            {
-                try
-                {
-                    var student = from d in db.MstStudents
-                                  where d.Id == Convert.ToInt32(studentId)
-                                  select d;
-
-                    if (student.Any())
-                    {
-                        db.MstStudents.DeleteOnSubmit(student.FirstOrDefault());
-                        db.SubmitChanges();
-                        return Request.CreateResponse(HttpStatusCode.OK, "Successfully deleted!");
-                    }
-                    else
-                    {
-                        return Request.CreateResponse(HttpStatusCode.NotFound, "Student not found!");
-                    }
-                }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
-
-                }
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
             }
         }
+
+        [HttpPut, Route("update/{id}")]
+        public HttpResponseMessage UpdateCourse(Api_Models.MstCourse_ApiModel objCourse, String Id)
+        {
+            try
+            {
+                var course = from d in db.MstCourses
+                             where d.Id == Convert.ToInt32(Id)
+                             select d;
+
+                if (course.Any())
+                {
+                    var updateCourse = course.FirstOrDefault();
+                    updateCourse.CourseCode = objCourse.CourseCode;
+                    updateCourse.Course = objCourse.Course;
+                    db.SubmitChanges();
+
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Course not found!");
+                }
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpDelete, Route("delete/{id}")]
+        public HttpResponseMessage DeleteCourse(String Id)
+        {
+            try
+            {
+                var course = from d in db.MstCourses
+                             where d.Id == Convert.ToInt32(Id)
+                             select d;
+
+                if (course.Any())
+                {
+                    db.MstCourses.DeleteOnSubmit(course.FirstOrDefault());
+                    db.SubmitChanges();
+
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Course not found!");
+                }
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+    }
 }

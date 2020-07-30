@@ -12,7 +12,7 @@ namespace SimpleBread.ApiControllers
     {
         Data.DbItelec4DataContext db = new Data.DbItelec4DataContext();
 
-        [Authorize, HttpGet, Route("course/list")]
+        [HttpGet, Route("course/list")]
         public List<Api_Models.MstCourse_ApiModel> ListCourse()
         {
             var courses = from d in db.MstCourses
@@ -26,7 +26,7 @@ namespace SimpleBread.ApiControllers
             return courses.ToList();
         }
 
-        [Authorize, HttpGet, Route("api/student/list")]
+        [HttpGet, Route("list")]
         public List<Api_Models.MstStudent_ApiModel> ListStudent()
         {
             var students = from d in db.MstStudents

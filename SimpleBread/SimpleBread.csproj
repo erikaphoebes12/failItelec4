@@ -172,7 +172,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiControllers\MstCourseControler.cs" />
+    <Compile Include="ApiControllers\MstCourseController.cs" />
     <Compile Include="ApiControllers\MstStudentController.cs" />
     <Compile Include="Api_Models\MstCourse_ApiModel.cs" />
     <Compile Include="Api_Models\MstStudent_ApiModel.cs" />
@@ -184,6 +184,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\SoftwareController.cs" />
     <Compile Include="Data\DbItelec4.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -262,6 +263,9 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Software\Index.cshtml" />
+    <Content Include="Views\Software\Course.cshtml" />
+    <Content Include="Views\Software\Students.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

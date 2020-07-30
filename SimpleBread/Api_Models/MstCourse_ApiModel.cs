@@ -12,4 +12,3 @@ namespace SimpleBread.Api_Models
         public String Course { get; set; }
     }
 }
-}
